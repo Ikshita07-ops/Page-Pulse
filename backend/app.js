@@ -12,6 +12,15 @@ app.use(express.json());
 // Request logging middleware
 app.use(logger);
 
+// Root health check endpoint
+app.get('/', (req, res) => {
+  res.status(200).json({ status: 'ok', message: 'Page Pulse Backend API running' });
+});
+
+app.get('/api', (req, res) => {
+  res.status(200).json({ status: 'ok', message: 'Page Pulse API active' });
+});
+
 app.use('/api/audit', auditRoutes);
 
 // Centralized Error Handling Middleware
