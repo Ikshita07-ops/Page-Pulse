@@ -1,9 +1,11 @@
 import axios from 'axios';
 
-// Dynamic base URL supporting environment variable override in production (e.g. Vercel)
+// Dynamic base URL: respects environment variable, uses relative /api in production (e.g. Vercel), or local port 3000
 const baseURL = (import.meta.env && import.meta.env.VITE_API_BASE_URL)
   ? import.meta.env.VITE_API_BASE_URL
-  : 'http://localhost:3000/api';
+  : (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'))
+    ? 'http://localhost:3000/api'
+    : '/api';
 
 const apiClient = axios.create({
   baseURL,
