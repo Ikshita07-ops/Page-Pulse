@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-// Dynamic base URL: respects environment variable, uses relative /api in production (e.g. Vercel), or local port 3000
+// Dynamic base URL: respects environment variable, uses relative /api in production, or local port 3000
 const baseURL = (import.meta.env && import.meta.env.VITE_API_BASE_URL)
   ? import.meta.env.VITE_API_BASE_URL
   : (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'))
@@ -12,7 +12,7 @@ const apiClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 15000, // 15 second timeout for the request
+  timeout: 60000, // 60 second timeout to accommodate Render free-tier cold starts
 });
 
 /**
@@ -29,7 +29,10 @@ export const auditRequest = async (url) => {
     if (error.response && error.response.data && error.response.data.message) {
       throw new Error(error.response.data.message);
     }
-    // If it's a network error (CORS, server down, etc.)
-    throw new Error('Failed to connect to the server. Please try again later.');
+    if (error.code === 'ECONNABORTED' || (error.message && error.message.includes('timeout'))) {
+      throw new Error('Server response timed out. The backend on Render may be waking up — please try again in 10 seconds.');
+    }
+    // Network / CORS failure
+    throw new Error('Failed to connect to the backend server. Please check your Render backend URL or Netlify VITE_API_BASE_URL setting.');
   }
 };
