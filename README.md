@@ -1,163 +1,116 @@
 # Page Pulse ⚡
 
 > **Instant Full-Stack Website SEO & Performance Audit Engine**  
-> Audits any URL in real-time for HTTP metrics, heading structures, metadata completeness, image accessibility, and content depth — delivered in a dark glassmorphism SaaS dashboard.
+> Real-time website diagnostic tool that evaluates HTTP response metrics, HTML DOM structure, heading hierarchies, image accessibility, body word count, and anti-bot protection mechanisms.
 
 ---
 
 ## 📋 Table of Contents
-- [Overview](#overview)
-- [Features](#features)
-- [Preview & Visual Mockups](#preview--visual-mockups)
-- [Tech Stack](#tech-stack)
-- [System Architecture](#system-architecture)
-- [Directory Structure](#directory-structure)
-- [API Documentation](#api-documentation)
-- [Error Handling](#error-handling)
-- [Installation & Quickstart](#installation--quickstart)
-- [Environment Variables](#environment-variables)
-- [Testing Suite](#testing-suite)
-- [Deployment Guide](#deployment-guide)
-- [Design Decisions](#design-decisions)
-- [Future Roadmap](#future-roadmap)
-- [License](#license)
+- [Overview](#-overview)
+- [Quickstart & Setup](#-quickstart--setup)
+- [API Contract](#-api-contract)
+- [Design Decisions & Reasoning](#-design-decisions--reasoning)
+- [Testing Suite](#-testing-suite)
+- [Project Architecture](#-project-architecture)
+- [License](#-license)
 
 ---
 
 ## 🌟 Overview
 
-**Page Pulse** is an enterprise-grade website analysis tool engineered to diagnose on-page SEO metrics, HTTP connection metrics, DOM quality, and anti-bot protection mechanisms. Built with a decoupled **Express/Node.js** backend and **React 18/Vite** frontend, Page Pulse delivers sub-second insights into page load health.
+**Page Pulse** is a decoupled full-stack website analysis platform built with a **Node.js / Express** backend and a **React 18 / Vite** frontend styled with custom Vanilla CSS glassmorphism. It audits any target URL in real time, delivering multi-factor SEO and website health scores along with actionable summary diagnostics.
 
 ---
 
-## ✨ Features
+## 💻 Quickstart & Setup
 
-- **⚡ Real-Time HTTP Metrics:** Measures precise latency (`responseTimeMs`), status codes (`200`, `301`, `403`, `404`, `500`), and human-readable status descriptors.
-- **🎯 Dynamic SEO & Health Scoring:** Multi-factor additive scoring algorithms evaluate page quality on a scale of 0 to 100.
-- **🛡️ Anti-Bot & CAPTCHA Detection:** Intelligent signal matching identifies Cloudflare, DDoS-Guard, and CAPTCHA challenge screens.
-- **📝 Clean Content Extraction:** Calculates true body word counts by stripping `<script>`, `<style>`, and `<noscript>` elements before parsing.
-- **🖼️ Accessibility Audit:** Flags images missing descriptive `alt` tags or containing empty whitespace strings.
-- **📊 Auto-Generated Summary Checklist:** Produces an interactive diagnostic report with green pass ticks and warning flags.
-- **📤 Export & Sharing Capabilities:** Instant download of JSON audit reports or formatted plain-text executive summaries, plus zero-friction clipboard copying with toast notifications.
-- **⏳ Session History:** Maintains a rolling list of recent 5 searches for rapid re-auditing.
+### Prerequisites
+- **Node.js**: `v18.0.0` or higher
+- **npm**: `v9.0.0` or higher
 
 ---
 
-## 🖼️ Preview & Visual Mockups
+### Option 1: Automated Launch (Windows)
+Double-click [`run.bat`](file:///d:/PP%20A/page-pulse/run.bat) in the project root. This automatically:
+1. Installs backend and frontend dependencies (if not present).
+2. Launches the backend server on `http://localhost:3000`.
+3. Launches the frontend Vite dev server on `http://localhost:5173`.
+4. Opens `http://localhost:5173` in your default web browser.
 
-### Dashboard Preview
-```
-┌────────────────────────────────────────────────────────────────────────┐
-│                        PAGE PULSE ⚡ AUDIT ENGINE                       │
-├────────────────────────────────────────────────────────────────────────┤
-│  [ 🔍 https://example.com                               ] [ Analyze ] │
-├────────────────────────────────────────────────────────────────────────┤
-│  SEO Score: 100/100  ████████████  │ Health Score: 100/100 ████████████ │
-├────────────────────────────────────────────────────────────────────────┤
-│  • HTTP Status: 200 OK             • Response Time: 142 ms (Fast)      │
-│  • Page Title: Present             • Meta Description: Present         │
-│  • H1 Structure: Optimal (1)       • Images Missing Alt: 0             │
-└────────────────────────────────────────────────────────────────────────┘
+---
+
+### Option 2: Manual Setup
+
+#### 1. Clone the Repository
+```bash
+git clone https://github.com/Ikshita07-ops/Page-Pulse.git
+cd Page-Pulse
 ```
 
-> *Placeholder: Add real screenshots (`docs/dashboard.png`) and demo recording (`docs/demo.gif`) here.*
+#### 2. Backend Setup
+```bash
+cd backend
+npm install
+npm run dev
+```
+*The backend server will start on `http://localhost:3000`.*
+
+#### 3. Frontend Setup
+```bash
+cd ../frontend
+npm install
+npm run dev
+```
+*The frontend application will run on `http://localhost:5173`.*
 
 ---
 
-## 🛠️ Tech Stack
+### Environment Configuration
 
-| Layer | Technologies & Libraries |
-| :--- | :--- |
-| **Backend Core** | Node.js (v18+), Express.js |
-| **Parsing & Network** | Axios, Cheerio |
-| **Frontend Framework** | React 18, Vite |
-| **Styling & UI** | Vanilla CSS3 (Custom Glassmorphism Design System) |
-| **Icons & Visuals** | Lucide React |
-| **Testing Framework** | Jest, Supertest |
-| **Process Control** | Windows Batch Script (`run.bat`), Environment Config (`dotenv`) |
+#### Backend Environment Variables (`backend/.env`)
+```env
+PORT=3000
+NODE_ENV=development
+```
 
----
-
-## 🏗️ System Architecture
-
-```mermaid
-flowchart TD
-    Client[React 18 + Vite Frontend] -->|POST /api/audit| Server[Express.js Gateway]
-    Server --> Logger[Logger Middleware]
-    Logger --> Controller[Audit Controller]
-    Controller -->|Validate URL| Validator[URL Validator Utility]
-    Controller -->|Audit Request| Service[Audit Service]
-    Service -->|HTTP GET max 10MB| Target[Target Web Server]
-    Target -->|HTML Body & Headers| Service
-    Service -->|DOM Parsing| Cheerio[Cheerio Parser]
-    Cheerio --> Helper1[Title & Meta Extractor]
-    Cheerio --> Helper2[H1 & Alt Image Counter]
-    Cheerio --> Helper3[Word Count & Bot Detector]
-    Service --> Engine[Scoring Engines: SEO & Health]
-    Engine --> Controller
-    Controller -->|JSON Response| Client
-    Server --> ErrorMW[Centralized Error Handler]
+#### Frontend Environment Variables (`frontend/.env`)
+```env
+VITE_API_BASE_URL=http://localhost:3000/api
 ```
 
 ---
 
-## 📁 Directory Structure
+## 🔌 API Contract
 
-```
-page-pulse/
-├── backend/
-│   ├── controllers/
-│   │   └── auditController.js        # Request validation and controller dispatch
-│   ├── middleware/
-│   │   ├── errorHandler.js           # Centralized exception transformer & responder
-│   │   └── logger.js                 # Terminal request logging & execution timer
-│   ├── routes/
-│   │   └── auditRoutes.js            # Express router (/api/audit endpoint mapping)
-│   ├── services/
-│   │   └── auditService.js           # Core scraping, parsing, & scoring algorithms
-│   ├── utils/
-│   │   ├── AppError.js               # Custom base operational error class
-│   │   ├── errors.js                 # Specific HTTP error hierarchy
-│   │   └── urlValidator.js           # URL protocol & format validator
-│   ├── tests/
-│   │   ├── unit/                     # Unit test suites (50+ tests)
-│   │   └── integration/              # Supertest HTTP integration suites
-│   ├── app.js                        # Express app creation & middleware mounting
-│   ├── server.js                     # HTTP server instantiation
-│   └── package.json
-├── frontend/
-│   ├── src/
-│   │   ├── hooks/
-│   │   │   └── useAudit.js           # Custom React hook for API state management
-│   │   ├── services/
-│   │   │   └── api.js                # Axios client with dynamic base URL support
-│   │   ├── styles/
-│   │   │   └── index.css             # Vanilla CSS tokenized design system
-│   │   ├── App.jsx                   # Dashboard components & layout
-│   │   └── main.jsx                  # React DOM entrypoint
-│   ├── index.html
-│   ├── vite.config.js
-│   └── package.json
-├── run.bat                           # Automated double-click dual-server launcher
-└── README.md                         # Comprehensive documentation
-```
+### Endpoint: `POST /api/audit`
+
+Audits the provided URL and returns HTTP connectivity metrics, HTML DOM analysis, anti-bot protection detection, and calculated performance scores.
 
 ---
 
-## 🔌 API Documentation
+### Request
 
-### `POST /api/audit`
+#### Headers
+`Content-Type: application/json`
 
-Audits a specified target URL and returns comprehensive metric evaluation data.
+#### Request Body Schema
+| Field | Type | Required | Description | Validation Rules |
+| :--- | :--- | :---: | :--- | :--- |
+| `url` | `string` | **Yes** | Target website URL to audit | Must be a valid `http://` or `https://` URL string. |
 
-#### Request Body
+#### Example Request Body
 ```json
 {
   "url": "https://example.com"
 }
 ```
 
+---
+
+### Response Contract
+
 #### Success Response (`200 OK`)
+
 ```json
 {
   "status": "success",
@@ -167,7 +120,7 @@ Audits a specified target URL and returns comprehensive metric evaluation data.
     "httpStatus": 200,
     "httpStatusText": "OK",
     "responseTimeMs": 142,
-    "timestamp": "2026-07-25T11:24:33.000Z",
+    "timestamp": "2026-07-25T14:45:00.000Z",
     "hasBotProtection": false,
     "pageTitle": "Example Domain",
     "metaDescription": null,
@@ -181,129 +134,149 @@ Audits a specified target URL and returns comprehensive metric evaluation data.
 }
 ```
 
+#### Response Data Fields Description
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `url` | `string` | Normalized target URL requested for auditing |
+| `hostname` | `string` | Domain hostname extracted from target URL |
+| `httpStatus` | `number` | Real HTTP status code received (e.g. `200`, `301`, `403`, `404`) |
+| `httpStatusText` | `string` | Human-readable HTTP status text (e.g. `"OK"`, `"Forbidden"`) |
+| `responseTimeMs` | `number` | Round-trip server response latency in milliseconds |
+| `timestamp` | `string` | ISO 8601 UTC timestamp of when the audit took place |
+| `hasBotProtection` | `boolean` | `true` if bot verification/Cloudflare/CAPTCHA challenge was detected |
+| `pageTitle` | `string \| null` | Inner text of `<title>` tag, or `null` if missing |
+| `metaDescription` | `string \| null` | `content` attribute of `<meta name="description">`, or `null` |
+| `h1Count` | `number` | Count of `<h1>` heading elements found in HTML body |
+| `imagesMissingAlt` | `number` | Count of `<img>` tags missing `alt`, having empty `alt=""`, or whitespace |
+| `wordCount` | `number` | Approximate body text word count (excluding `<script>` and `<style>`) |
+| `favicon` | `string` | Google Favicon API service URL for domain icon |
+| `seoScore` | `number` | Additive SEO score calculated from on-page structure (0-100) |
+| `healthScore` | `number` | Additive health score calculated from response speed & status (0-100) |
+
 ---
 
-## ⚠️ Error Handling
+### Error Responses Contract
 
-All runtime exceptions converge at `backend/middleware/errorHandler.js`, transforming network and parsing errors into standard operational HTTP error contracts.
+All errors return a uniform operational JSON payload format:
 
-| Status Code | Error Class | Trigger Condition |
+```json
+{
+  "status": "fail",
+  "statusCode": 400,
+  "error": "ValidationError",
+  "message": "Invalid URL provided. URL must start with http:// or https://",
+  "timestamp": "2026-07-25T14:45:00.000Z"
+}
+```
+
+#### Error Codes & Triggers
+| Status Code | Error Class | Trigger Scenario |
 | :---: | :--- | :--- |
-| `400` | `ValidationError` / `FetchError` | Invalid URL format or host resolution failure (DNS lookup failure). |
-| `408` | `TimeoutError` | Target website exceeds 10,000ms response window. |
-| `415` | `UnsupportedContentError` | Target URL returns non-HTML media (PDF, PNG, JSON). |
-| `500` | `ParsingError` / `AppError` | Internal HTML DOM structural breakdown or unexpected exception. |
+| **`400 Bad Request`** | `ValidationError` | Missing `url` body field, invalid URL protocol/format, or host lookup failure. |
+| **`408 Request Timeout`** | `TimeoutError` | Target web server fails to respond within the 10,000ms execution window. |
+| **`415 Unsupported Media`** | `UnsupportedContentError` | Target URL returns non-HTML media (e.g. `application/pdf`, `image/png`, `application/json`). |
+| **`500 Internal Error`** | `ParsingError` / `AppError` | Unhandled DOM parsing breakdown or unexpected server crash. |
 
 ---
 
-## 💻 Installation & Quickstart
+## 💡 Design Decisions & Reasoning
 
-### Prerequisites
-- Node.js `v18.0.0` or higher
-- npm `v9.0.0` or higher
-
-### Automated Launch (Windows)
-Double-click `run.bat` in the project root folder. It initializes the backend server on port `3000`, frontend server on port `5173`, and opens `http://localhost:5173` in your default browser automatically.
-
-### Manual Launch
-
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/your-username/page-pulse.git
-   cd page-pulse
-   ```
-
-2. **Start Backend Server:**
-   ```bash
-   cd backend
-   npm install
-   npm run dev
-   ```
-
-3. **Start Frontend Server:**
-   ```bash
-   cd ../frontend
-   npm install
-   npm run dev
-   ```
+### Decision 1: Server-Side Cheerio Static Parsing over Headless Browsers (Puppeteer/Playwright)
+* **Context:** Auditing web pages requires extracting DOM metadata (titles, headings, meta descriptions, image alt tags, word count).
+* **Choice:** We chose **Cheerio** paired with **Axios** over running headful/headless Chromium browser automation.
+* **Reasoning:**
+  1. **Latency & Performance:** Cheerio parses HTML strings in under **10ms**, whereas launching a headless Chrome process requires **1500ms+** cold-start overhead per request.
+  2. **Resource Efficiency:** Heavy headless browser instances consume **>500MB RAM** per concurrent context, limiting server scalability. Cheerio operates with negligible memory overhead (**<20MB**), enabling high API concurrency.
+  3. **Non-Blocking Network Scrapes:** Axios handles network timeouts (`10s`) and body response limits (`10MB`) natively without browser process management bottlenecks.
 
 ---
 
-## 🌐 Environment Variables
+### Decision 2: Multi-Factor Additive Scoring Algorithm over Binary Pass/Fail Rules
+* **Context:** Developers and marketers need intuitive, actionable metrics rather than simple boolean pass/fail indicators.
+* **Choice:** We implemented separate multi-factor **SEO Score** (0-100) and **Health Score** (0-100) scoring engines.
+* **Reasoning:**
+  1. **Nuanced Evaluation:** Binary validation hides progress. An additive model rewards partial completeness (e.g., granting partial credit for multiple `<h1>` tags or sub-800ms latencies).
+  2. **Clear Prioritization:** Decoupling SEO quality from Connection Health allows users to immediately distinguish whether a page needs content optimization vs infrastructure latency improvements.
+  3. **Deterministic Formula:** Pure mathematical functions make scores 100% predictable and reproducible across test suites without nondeterministic external dependencies.
 
-### Backend (`backend/.env`)
-```env
-PORT=3000
-NODE_ENV=development
-```
+---
 
-### Frontend (`frontend/.env`)
-```env
-VITE_API_BASE_URL=http://localhost:3000/api
-```
+### Decision 3: Centralized Express Operational Error Architecture with Custom Error Classes
+* **Context:** Real-world web auditing involves network timeouts, invalid inputs, DNS failures, anti-bot blocks, and unsupported file formats.
+* **Choice:** We created a hierarchical `AppError` base class with specific subclasses (`ValidationError`, `FetchError`, `TimeoutError`, `UnsupportedContentError`, `ParsingError`) and a centralized Express error middleware.
+* **Reasoning:**
+  1. **Domain-Specific Error Contracts:** Allows controller and service logic to throw semantic domain errors (e.g., `throw new UnsupportedContentError(...)`) without manually formatting HTTP response codes.
+  2. **Security & Information Hiding:** In production mode (`NODE_ENV=production`), internal stack traces and native system exception details are sanitized before reaching the API client.
+  3. **Predictable Client Integration:** Guarantees that the React frontend always receives a structured error object with a human-readable `message` for toast notifications and UI error banners.
 
 ---
 
 ## 🧪 Testing Suite
 
-The project includes unit and integration test coverage (`>95%` code statement coverage).
+The project includes unit and integration test coverage across the backend services, controllers, error handlers, and parsing logic.
 
-### Run Test Suite
+### Run All Tests
 ```bash
 cd backend
 npm test
 ```
 
-### Test Coverage Summary
-- **URL Validation Suite:** Validates protocols, subdomains, IP addresses, spaces, and edge cases.
-- **HTML Parser Suite:** Tests title extraction, meta tag parsing, H1 count, alt attribute detection, and script-stripping word counter.
-- **Scoring Engine Suite:** Validates SEO & Health score additive point allocations across full scale ranges.
-- **Error Handler Suite:** Verifies status code mappings for timeouts, DNS failures, and non-operational crashes.
-- **API Integration Suite:** End-to-end endpoint tests for happy paths, timeouts, non-HTML payloads, and bot detection responses.
+### Test Suite Structure
+```
+backend/tests/
+├── unit/
+│   ├── parsingLogic.test.js      # Unit tests for happy path, non-HTML payload, parsing failures & edge cases
+│   ├── auditService.test.js      # Scoring algorithms, bot protection signals & status mapping
+│   ├── auditController.test.js   # Request validation & controller response mapping
+│   ├── errorHandler.test.js      # Exception transformer & operational HTTP status mapping
+│   └── urlValidator.test.js      # URL format validation, protocol checking & edge cases
+└── integration/
+    └── auditApi.test.js          # Supertest end-to-end API HTTP endpoint contract tests
+```
 
 ---
 
-## 🚀 Deployment Guide
+## 🏗️ Project Architecture
 
-### Backend Deployment (Render / Railway)
-1. Push `backend/` repository to GitHub.
-2. Create a Node.js Web Service on **Render** or **Railway**.
-3. Set build command to `npm install` and start command to `node server.js`.
-4. Configure environment variable `PORT=3000`.
-
-### Frontend Deployment (Vercel)
-1. Import `frontend/` directory to **Vercel**.
-2. Set Framework Preset to **Vite**.
-3. Add Environment Variable:
-   - `VITE_API_BASE_URL` = `https://your-backend-service.onrender.com/api`
-4. Deploy application.
-
----
-
-## 💡 Design Decisions
-
-- **Why Cheerio over Puppeteer?**  
-  Cheerio performs server-side static HTML parsing in `<10ms` with negligible CPU/memory footprint compared to running headful or headless Chromium browsers (`>500MB` RAM per instance).
-- **Why Vanilla CSS for UI?**  
-  Eliminates Tailwind compiler overhead, allows pixel-perfect glassmorphism panels, dark mode color science, dynamic keyframe particle animations, and native dynamic responsive layouts.
-- **Why Axios `validateStatus: () => true`?**  
-  Enables auditing of legitimate HTTP status error pages (`403 Forbidden`, `404 Not Found`, `500 Server Error`) without throwing uncaught Axios network exceptions.
-
----
-
-## 🔮 Future Roadmap
-
-- [ ] Headless browser fallback (Playwright) for JS-rendered Single Page Applications (SPAs).
-- [ ] PostgreSQL persistence layer for audit history tracking and comparison graphs.
-- [ ] User authentication (OAuth / JWT) with saved PDF download reports.
-- [ ] Automated scheduled URL re-audits with Webhook / Email alerting triggers.
+```
+page-pulse/
+├── backend/
+│   ├── controllers/
+│   │   └── auditController.js     # Validates requests and calls audit service
+│   ├── middleware/
+│   │   ├── errorHandler.js        # Centralized exception response handler
+│   │   └── logger.js              # HTTP request logger
+│   ├── routes/
+│   │   └── auditRoutes.js         # API route endpoints (/api/audit)
+│   ├── services/
+│   │   └── auditService.js        # Scraping, Cheerio DOM parsing & scoring engines
+│   ├── utils/
+│   │   ├── AppError.js            # Operational base error class
+│   │   ├── errors.js              # Specific error class definitions
+│   │   └── urlValidator.js        # URL format validator
+│   ├── tests/                     # Jest unit & integration test suites
+│   ├── app.js                     # Express app setup & middleware
+│   ├── server.js                  # Server port listening entrypoint
+│   └── package.json
+├── frontend/
+│   ├── src/
+│   │   ├── hooks/
+│   │   │   └── useAudit.js        # React hook for managing audit state & history
+│   │   ├── services/
+│   │   │   └── api.js             # Axios client instance
+│   │   ├── styles/
+│   │   │   └── index.css          # Vanilla CSS glassmorphism styling
+│   │   ├── App.jsx                # UI components & dashboard
+│   │   └── main.jsx               # React entrypoint
+│   ├── index.html
+│   ├── vite.config.js
+│   └── package.json
+├── run.bat                        # Double-click Windows dual-server launcher
+└── README.md                      # Project documentation
+```
 
 ---
 
 ## 📄 License
 
 Distributed under the **MIT License**. See `LICENSE` for details.
-
----
-
-*Built with precision for the Digital Heroes Engineering Evaluation.*
